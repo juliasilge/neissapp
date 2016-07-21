@@ -7,4 +7,5 @@ In the app, the user chooses
 * sex/gender
 * race/ethnicity
 * age
+
 and then the most common injuries are displayed.
