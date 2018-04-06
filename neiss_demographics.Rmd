@@ -15,7 +15,6 @@ library(flexdashboard)
 library(dplyr)
 library(ggplot2)
 library(scales)
-library(ggstance) # devtools::install_github("lionel-/ggstance")
 library(neiss) # devtools::install_github("hadley/neiss")
 
 injuries <- left_join(injuries, products, by = c("prod1" = "code")) %>% 
@@ -61,7 +60,8 @@ renderPlot({
   selected() %>%
     group_by(product) %>%
     summarise(total = sum(weight)) %>% 
-    top_n(20, total) %>% arrange(desc(total)) %>%
+    top_n(20, total) %>% 
+    arrange(desc(total)) %>%
     mutate(product = factor(product, levels = rev(unique(product)))) %>%
     ggplot(aes(product, total, fill = total)) + 
     geom_col() +
@@ -81,8 +81,9 @@ renderPlot({
 
 ```{r}
 t <- eventReactive(input$narrative, 
-                   selected() %>% sample_n(1) %>% select(narrative) %>%
-                     as.character())
+                   selected() %>% 
+                     sample_n(1) %>% 
+                     pull(narrative))
 
 renderText({
   t()
