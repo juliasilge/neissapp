@@ -22,6 +22,44 @@ injuries <- left_join(
     rename(product = title)
 ```
 
+## Column {.sidebar}
+
+The [Consumer Product Safety Commission](http://www.cpsc.gov/en/Research--Statistics/NEISS-Injury-Data/) collects data on emergency room visits related to injuries from many consumer products; this NEISS data is made available as an [R package](https://github.com/hadley/neiss). I examined some aspects of these injuries in a [blog post](http://juliasilge.com/blog/Your-Floor/), and this Shiny app further explores how the injuries people suffer change with sex/gender, age, and race/ethnicity. 
+
+Use the inputs below to select demographic identifiers. Click the button to read an example narrative.
+
+```{r}
+selectInput("sex", label = "Sex/gender:",
+            choices = levels(factor(injuries$sex)), selected = "Female")
+
+selectInput("race", label = "Race/ethnicity:",
+            choices = levels(factor(injuries$race)), selected = "White")
+
+sliderInput("age", label = "Age:",
+            min = 0, max = 100, value = c(40, 49))
+
+actionButton("narrative", label = "What happened?")
+```
+
+The code for this Shiny app is [on GitHub](https://github.com/juliasilge/neissapp).
+
+## Column 
+
+### Row {height=80%}
+
+```{r}
+#| title: Most Common Injuries
+plotOutput("plot")
+```
+
+### Row {height=20%}
+
+```{r}
+#| title: Example Narrative
+textOutput("text")
+```
+
+
 ```{r}
 #| context: server
 selected <- reactive({
@@ -63,43 +101,5 @@ output$text <- renderText({
     t()
 })
 
-```
-
-
-## Column {.sidebar}
-
-The [Consumer Product Safety Commission](http://www.cpsc.gov/en/Research--Statistics/NEISS-Injury-Data/) collects data on emergency room visits related to injuries from many consumer products; this NEISS data is made available as an [R package](https://github.com/hadley/neiss). I examined some aspects of these injuries in a [blog post](http://juliasilge.com/blog/Your-Floor/), and this Shiny app further explores how the injuries people suffer change with sex/gender, age, and race/ethnicity. 
-
-Use the inputs below to select demographic identifiers. Click the button to read an example narrative.
-
-```{r}
-selectInput("sex", label = "Sex/gender:",
-            choices = levels(factor(injuries$sex)), selected = "Female")
-
-selectInput("race", label = "Race/ethnicity:",
-            choices = levels(factor(injuries$race)), selected = "White")
-
-sliderInput("age", label = "Age:",
-            min = 0, max = 100, value = c(40, 49))
-
-actionButton("narrative", label = "What happened?")
-```
-
-The code for this Shiny app is [on GitHub](https://github.com/juliasilge/neissapp).
-
-## Column 
-
-## Row {height=80%}
-
-```{r}
-#| title: Most Common Injuries
-plotOutput("plot")
-```
-
-## Row {height=20%}
-
-```{r}
-#| title: Example Narrative
-textOutput("text")
 ```
 
