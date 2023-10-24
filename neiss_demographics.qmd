@@ -1,0 +1,105 @@
+---
+title: "Don't Fall Down Your Stairs"
+format:
+  dashboard:
+    theme: sandstone
+    orientation: columns
+server: shiny
+---
+
+```{r}
+#| context: setup
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(neiss) # devtools::install_github("hadley/neiss")
+
+injuries <- left_join(
+    injuries, 
+    products, 
+    by = c("prod1" = "code")
+) |> 
+    rename(product = title)
+```
+
+```{r}
+#| context: server
+selected <- reactive({
+    injuries |> 
+        filter(
+            sex == input$sex,
+            race == input$race,
+            age >= input$age[1] & age <= input$age[2]
+        ) 
+})
+
+
+output$plot <- renderPlot({
+    selected() |>
+        group_by(product) |>
+        summarise(total = sum(weight)) |> 
+        top_n(20, total) |> 
+        arrange(desc(total)) |>
+        mutate(product = factor(product, levels = rev(unique(product)))) |>
+        ggplot(aes(total, product, fill = total)) + 
+        geom_col() +
+        theme_minimal(base_size = 14) +
+        theme(legend.position = "none") +
+        scale_y_continuous(expand=c(0,0), labels = scientific_format()) +
+        scale_fill_gradient(low = "#86d746", high = "#5eb151") +
+        labs(x = "Estimated number of injuries each year", y = NULL)
+    
+    
+})
+
+t <- eventReactive(
+    input$narrative, 
+    selected() |> 
+        slice_sample(n = 1) |> 
+        pull(narrative)
+)
+
+output$text <- renderText({
+    t()
+})
+
+```
+
+
+## Column {.sidebar}
+
+The [Consumer Product Safety Commission](http://www.cpsc.gov/en/Research--Statistics/NEISS-Injury-Data/) collects data on emergency room visits related to injuries from many consumer products; this NEISS data is made available as an [R package](https://github.com/hadley/neiss). I examined some aspects of these injuries in a [blog post](http://juliasilge.com/blog/Your-Floor/), and this Shiny app further explores how the injuries people suffer change with sex/gender, age, and race/ethnicity. 
+
+Use the inputs below to select demographic identifiers. Click the button to read an example narrative.
+
+```{r}
+selectInput("sex", label = "Sex/gender:",
+            choices = levels(factor(injuries$sex)), selected = "Female")
+
+selectInput("race", label = "Race/ethnicity:",
+            choices = levels(factor(injuries$race)), selected = "White")
+
+sliderInput("age", label = "Age:",
+            min = 0, max = 100, value = c(40, 49))
+
+actionButton("narrative", label = "What happened?")
+```
+
+The code for this Shiny app is [on GitHub](https://github.com/juliasilge/neissapp).
+
+## Column 
+
+## Row {height=80%}
+
+```{r}
+#| title: Most Common Injuries
+plotOutput("plot")
+```
+
+## Row {height=20%}
+
+```{r}
+#| title: Example Narrative
+textOutput("text")
+```
+
