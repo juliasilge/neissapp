@@ -41,6 +41,8 @@ sliderInput("age", label = "Age:",
 actionButton("narrative", label = "What happened?")
 ```
 
+<br>
+
 The code for this Shiny app is [on GitHub](https://github.com/juliasilge/neissapp).
 
 ## Column 
@@ -83,7 +85,7 @@ output$plot <- renderPlot({
         geom_col() +
         theme_minimal(base_size = 14) +
         theme(legend.position = "none") +
-        scale_y_continuous(expand=c(0,0), labels = scientific_format()) +
+        scale_x_continuous(expand=c(0,0), labels = scientific_format()) +
         scale_fill_gradient(low = "#86d746", high = "#5eb151") +
         labs(x = "Estimated number of injuries each year", y = NULL)
     
