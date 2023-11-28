@@ -1,0 +1,15 @@
+name: neiss_demographics
+title: neiss_demographics
+username: juliasilge
+account: juliasilge
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 116004
+bundleId: 7980916
+url: https://juliasilge.shinyapps.io/neiss_demographics/
+version: 1
+quarto_version: 1.4.513
+quarto_engines: knitr
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: README.md
